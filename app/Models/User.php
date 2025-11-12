@@ -1,10 +1,13 @@
 <?php
+// app/Models/User.php
 
 namespace App\Models;
 
+// Все необходимые импорты
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 
 class User extends Authenticatable
 {
@@ -31,9 +34,10 @@ class User extends Authenticatable
         ];
     }
 
+    // Убедимся что Post модель доступна
     public function posts()
     {
-        return $this->hasMany(Post::class);
+        return $this->hasMany(\App\Models\Post::class);
     }
 
     public function isAdmin()
@@ -41,9 +45,17 @@ class User extends Authenticatable
         return $this->status === 'admin';
     }
 
-    // Добавляем метод для совместимости с Laravel Auth
-    // public function getAuthIdentifierName()
-    // {
-    //     return 'username';
-    // }
+    public function getAvatarUrl()
+    {
+        if ($this->avatar) {
+            $filePath = 'public/avatars/' . $this->avatar;
+
+            if (Storage::exists($filePath)) {
+                // Используем прямой роут вместо симлинка
+                return route('avatar.direct', ['filename' => $this->avatar]);
+            }
+        }
+
+        return asset('images/default-avatar.png');
+    }
 }

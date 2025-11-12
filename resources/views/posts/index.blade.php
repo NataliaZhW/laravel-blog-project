@@ -12,10 +12,18 @@
     @foreach($posts as $post)
     <div class="bg-white rounded-lg shadow-md p-6">
         <div class="flex justify-between items-start mb-4">
-            <div>
-                <h2 class="text-xl font-semibold">{{ $post->user->username }}</h2>
-                <p class="text-gray-500 text-sm">{{ $post->created_at->format('d.m.Y H:i') }}</p>
+            <!-- Левая часть с аватаром и информацией -->
+            <div class="flex items-center space-x-4">
+                <img src="{{ $post->user->getAvatarUrl() }}"
+                     alt="{{ $post->user->username }}"
+                     class="w-12 h-12 rounded-full object-cover">
+                <div>
+                    <h2 class="text-xl font-semibold">{{ $post->user->username }}</h2>
+                    <p class="text-gray-500 text-sm">{{ $post->created_at->format('d.m.Y H:i') }}</p>
+                </div>
             </div>
+            
+            <!-- Правая часть с кнопками (если доступно) -->
             @if(Auth::id() === $post->user_id || Auth::user()->isAdmin())
             <div class="flex space-x-2">
                 <a href="{{ route('posts.edit', $post) }}" class="text-blue-600 hover:text-blue-800">Редактировать</a>
@@ -29,6 +37,6 @@
         </div>
         <p class="text-gray-700 whitespace-pre-line">{{ $post->content }}</p>
     </div>
-    @endforeach
+@endforeach
 </div>
 @endsection
